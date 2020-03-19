@@ -213,7 +213,7 @@ client.on("message", async message => {
       		return message.reply("I can't execute this command here!");
       	if(!message.member.hasPermission("ADMINISTRATOR"))
 
-      	let fejk=0
+      	let fejk=0;
       	if(parseInt(args[0])>99) {
         	args[0]=99
         	fejk=100
