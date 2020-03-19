@@ -212,7 +212,7 @@ client.on("message", async message => {
     	if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
       	if(!message.member.hasPermission("ADMINISTRATOR"))
-
+      		return message.reply("sorry, you don't have permissions to do that!");
       	let fejk=0;
       	if(parseInt(args[0])>99) {
         	args[0]=99
