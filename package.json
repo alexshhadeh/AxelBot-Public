@@ -25,10 +25,10 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arnon85/AxelBot.git"
+    "url": "https://github.com/arnon85/AxelBot-Public"
   },
   "bugs": {
-    "url": "https://github.com/arnon85/AxelBot/issues"
+    "url": "https://github.com/arnon85/AxelBot-Public/issues"
   },
-  "homepage": "https://github.com/arnon85/AxelBot#readme"
+  "homepage": "https://github.com/arnon85/AxelBot-Public#readme"
 }
