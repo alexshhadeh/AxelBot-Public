@@ -768,9 +768,9 @@ client.on("message", async message => {
 
 		let inbatime = args[0];
 		if(!inbatime)
-			client.channels.get(`623507959623974954`).send(`Rozpoczynanie inby na czas nieokreślony...`);
+			client.channels.get(`690149095993901146`).send(`Rozpoczynanie inby na czas nieokreślony...`);
 		else
-			client.channels.get(`623507959623974954`).send(`Rozpoczynanie inby na ${ms(ms(inbatime))}`);
+			client.channels.get(`690149095993901146`).send(`Rozpoczynanie inby na ${ms(ms(inbatime))}`);
 
 		let inbarole = message.guild.roles.find(role => role.name === "AxelInba");
 		if(!inbarole) {
@@ -800,7 +800,7 @@ client.on("message", async message => {
 				/*message.guild.members.filter(m => !m.user.bot).forEach(member => member.removeRole(inbarole.id));*/
 				const fetchedChannel = message.guild.channels.find(channel => channel.name === "inba");
 				fetchedChannel.delete();
-				client.channels.get(`623507959623974954`).send(`Inba zakończona!`);
+				client.channels.get(`690149095993901146`).send(`Inba zakończona!`);
 			}, ms(inbatime));
 		}
 	}
@@ -816,7 +816,7 @@ client.on("message", async message => {
 	        /*message.guild.members.filter(m => !m.user.bot).forEach(member => member.removeRole(inbarole.id));*/
 	        const fetchedChannel = message.guild.channels.find(channel => channel.name === "inba");
 	        fetchedChannel.delete();
-	       	client.channels.get(`623507959623974954`).send(`Inba zakończona!`);
+	       	client.channels.get(`690149095993901146`).send(`Inba zakończona!`);
 	    } else {
 	    	return message.reply("inba nie została rozpoczęta!");
 	    }
