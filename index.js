@@ -242,7 +242,7 @@ client.on("message", async message => {
   	if(command === "mihaszki") {
     	if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
-      message.channel.send("<:org:616032276979122186>");
+      message.channel.send("<:org:699029403513913406>");
   	}
   	/*if(command === "help") {
     	message.react("😈");
