@@ -750,7 +750,7 @@ client.on("message", async message => {
 
 		let mockEmbed = new Discord.RichEmbed()
 			.setColor("FF6347")
-			.setDescription(args.map(randomizeCase))
+			.setDescription(args.map(randomizeCase).join(' '))
 			.setImage("https://cdn.discordapp.com/attachments/424889733043191810/425242569325150208/mock.jpg")
 
 		message.channel.send(mockEmbed)
