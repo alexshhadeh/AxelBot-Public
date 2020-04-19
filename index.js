@@ -344,15 +344,44 @@ client.on("message", async message => {
   	}
   	if(isNaN(parseInt(command)) == false) {
     	let x=parseInt(command)+1
-    	if(x=="Infinity")
+    	if(x=="Infinity" || x=="-Infinity")
       		x="∞"
-    	if(x.toString()[1]=="e") {
+    	if(x.toString()[1]=="e" || x.toString()[2]=="e") {
       		x="∞"
     	}
     	message.channel.send("+" + x);
     }
-  	if(command == '∞') {
-    	message.channel.send("+∞+1")
+  	if(command.toString()[0] == '∞') {
+  		if(command == "∞") {
+  			message.channel.send("+∞+1");
+  		} else {
+  			command=command.toString().substring(2, command.toString().length)
+	    	if(isNaN(parseInt(command)) == false) {
+	    	let x=parseInt(command)+1
+	    	if(x=="Infinity" || x=="-Infinity")
+	      		x="∞"
+	    	if(x.toString()[1]=="e" || x.toString()[2]=="e") {
+	      		x="∞"
+	    	}
+	    	message.channel.send("+∞+" + x);
+    		}
+    	}
+  	}
+  	if(command.toString()[0] == '-' && command.toString()[1] == '∞') {
+  		if(command == "-∞") {
+  			message.channel.send("+-∞-1");
+  		} else {
+  			command=command.toString().substring(3, command.toString().length)
+	    	if(isNaN(parseInt(command)) == false) {
+	    	let x=parseInt(command)+1
+	    	if(x=="Infinity" || x=="-Infinity")
+	      		x="∞"
+	    	if(x.toString()[1]=="e" || x.toString()[2]=="e") {
+	      		x="∞"
+	    	}
+	    	message.channel.send("+-∞-" + x);
+	    	}
+	    }
   	}
   	if(command == 'pick') {
   		if(parseInt(args[0])<2 || isNaN(parseInt(args[0])))
