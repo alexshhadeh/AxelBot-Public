@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "alex.sh",
+  "author": "alexshhadeh",
   "license": "ISC",
   "dependencies": {
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
@@ -25,10 +25,10 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/arnon85/AxelBot-Public"
+    "url": "https://github.com/alexshhadeh/AxelBot-Public"
   },
   "bugs": {
-    "url": "https://github.com/arnon85/AxelBot-Public/issues"
+    "url": "https://github.com/alexshhadeh/AxelBot-Public/issues"
   },
-  "homepage": "https://github.com/arnon85/AxelBot-Public#readme"
+  "homepage": "https://github.com/alexshhadeh/AxelBot-Public#readme"
 }

