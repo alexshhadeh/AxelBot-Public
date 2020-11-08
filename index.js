@@ -20,7 +20,7 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 client.on('guildMemberAdd', member => {
-	client.channels.get(`728248185440567367`).send(`Eluwa <@${member.id}>! 🍻`);
+	client.channels.get(`771631639705026591`).send(`Eluwa <@${member.id}>! 🍻`);
 	console.log('Użytkownik @' + member.user.username + ' właśnie dołączył do serwera!');
 	client.channels.get(`690154190210596938`).fetchMessages().then((m) => {
 		for (const [id, message] of m) {
@@ -44,7 +44,7 @@ client.on('guildMemberAdd', member => {
 	member.addRole(role);
 });
 client.on('guildMemberRemove', member => {
-	client.channels.get(`728248185440567367`).send(`\`${member.user.tag}\` spadł z rowerka 🤠`);
+	client.channels.get(`771631639705026591`).send(`\`${member.user.tag}\` spadł z rowerka 🤠`);
 	console.log('Użytkownik @' + member.user.username + ' właśnie opuścił serwer!');
 	client.channels.get(`690154190210596938`).fetchMessages().then((m) => {
 		for (const [id, message] of m) {
