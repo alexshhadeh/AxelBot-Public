@@ -1,5 +1,5 @@
 # AxelBot
-A very versatile discord bot written in JavaScript. Created to help with managing my and my friends' Discord server and give us some fun :). Development started in 2019 and up until now it was hosted only in a private repo.
+A very versatile Discord bot written in JavaScript. Created to help with managing my and my friends' Discord server and give us some fun :). Development started in 2019 and up until now it was hosted only in a private repo.
 
 ## Features:
 Default prefix: +
