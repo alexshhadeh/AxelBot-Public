@@ -1,0 +1,34 @@
+{
+  "name": "axelbot",
+  "version": "1.0.0",
+  "description": "Let's throw that party!",
+  "main": "bot.json",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "alexshhadeh",
+  "license": "ISC",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "giphy-api": "^2.0.1",
+    "google-translate-api": "^2.3.0",
+    "got": "^10.5.7",
+    "hastebin-gen": "^2.0.5",
+    "ms": "^2.1.2",
+    "weather-js": "^2.0.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexshhadeh/AxelBot-Public"
+  },
+  "bugs": {
+    "url": "https://github.com/alexshhadeh/AxelBot-Public/issues"
+  },
+  "homepage": "https://github.com/alexshhadeh/AxelBot-Public#readme"
+}
