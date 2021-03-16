@@ -42,6 +42,7 @@ Default prefix: +
 - +stats - shows how many reputation points the users have.
 - +random - sends a random number with a cute emoji OwO
 - +\<number> - sends the exact same message but with a higher number (for example, if you like something and say +1, the bot says +2)
+- +votekick <@user> - Gives 1 out of 5 required votes to kick someone.
 
 ## License:
 This project is released under the MIT license. See the included license file.
