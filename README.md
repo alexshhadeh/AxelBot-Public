@@ -31,18 +31,18 @@ Default prefix: +
 - `+weather <city>` - shows the weather in the specified city.
 - `+poll <text>` - starts a simple poll with reactions 👍🏻, 👎🏻 and 🤷.
 - `+inbastart <time>` - starts inba (locks access to all channels and creates a new spam channel) for the specified amount of time. If <time> is empty, it starts inba indefinitely.
-- +inbastop - ends inba (regrants access to all the channels and deletes the spam channel).
-- +addrole <@user> <role> - gives the user the role.
-- +removerole <@user> <role> - removes the role from the user.
-- +cipher <number> <text> - ciphers the text with three different ciphers.
-- +isolate <@user> - moves the user to an isolated channel. Furthermore, AxelBot remembers who was isolated and if an isolated person decides to leave the server and join it again, they get isolated again.
-- +free <@user> - frees the user from the isolation.
-- +rep <@user> - gives the user a reputation point.
-- -rep <@user> - takes away the user a reputation point
-- +stats - shows how many reputation points the users have.
-- +random - sends a random number with a cute emoji OwO
-- +<number> - sends the exact same message but with a higher number (for example, if you like something and say +1, the bot says +2)
-- +votekick <@user> - Gives 1 out of 5 required votes to kick someone.
+- `+inbastop` - ends inba (regrants access to all the channels and deletes the spam channel).
+- `+addrole <@user> <role>` - gives the user the role.
+- `+removerole <@user> <role>` - removes the role from the user.
+- `+cipher <number> <text>` - ciphers the text with three different ciphers.
+- `+isolate <@user>` - moves the user to an isolated channel. Furthermore, AxelBot remembers who was isolated and if an isolated person decides to leave the server and join it again, they get isolated again.
+- `+free <@user>` - frees the user from the isolation.
+- `+rep <@user>` - gives the user a reputation point.
+- `-rep <@user>` - takes away the user a reputation point
+- `+stats` - shows how many reputation points the users have.
+- `+random` - sends a random number with a cute emoji OwO
+- `+<number>` - sends the exact same message but with a higher number (for example, if you like something and say +1, the bot says +2)
+- `+votekick <@user>` - Gives 1 out of 5 required votes to kick someone.
 
 ## License:
 This project is released under the MIT license. See the included license file.
